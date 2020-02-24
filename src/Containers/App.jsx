@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import Form from "../Components/Form";
 import List from "../Components/List";
-import { tracker } from "../Utils/utils";
 
 class App extends Component {
     state = {
@@ -19,7 +18,6 @@ class App extends Component {
 
     updateStates = () => {
         setInterval(this.tick, 1000);
-        setInterval(this.setPauseTime, 1000);
         setInterval(this.setLocalStorage, 1000);
     };
 
@@ -40,14 +38,9 @@ class App extends Component {
                 {
                     id: new Date().getTime(),
                     title: this.inputRef.current.value.trim() || new Date().toLocaleTimeString(),
-                    hours: "0",
-                    minutes: "0",
-                    seconds: "0",
-                    milliseconds: "0",
+                    seconds: 0,
                     pause: false,
-                    pauseTime: 0,
-                    startTime: new Date().getTime(),
-                    currentTime: null,
+                    currentTime: new Date().getTime(),
                 },
                 ...this.state.items,
             ],
@@ -77,28 +70,26 @@ class App extends Component {
         });
     };
 
-    setPauseTime = () => {
-        const { items } = this.state;
-
-        this.setState({
-            items: items.map(item => {
-                if (item.pause) {
-                    return { ...item, pauseTime: item.pauseTime + 1 };
-                }
-                return item;
-            }),
-        });
-    };
-
     tick = () => {
+        const dateNow = new Date().getTime();
         const { items } = this.state;
+
         items.length > 0 &&
             this.setState({
                 items: items.map(item => {
+                    if (!item.pause) {
+                        return {
+                            ...item,
+                            seconds: item.seconds + Math.round((dateNow - item.currentTime) / 1000),
+                            currentTime: dateNow,
+                        };
+                    }
                     return {
                         ...item,
-                        ...tracker(item.startTime, item.currentTime, item.pauseTime),
-                        currentTime: new Date().getTime(),
+                        seconds:
+                            item.seconds +
+                            Math.round((dateNow - item.currentTime) / 1000 - (dateNow - item.currentTime) / 1000),
+                        currentTime: dateNow,
                     };
                 }),
             });

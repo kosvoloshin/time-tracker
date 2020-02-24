@@ -1,18 +1,21 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { addZero } from "../Utils/utils";
+import { addZero, converter } from "../Utils/utils";
 
 const ListItem = ({ items, handlerPause, handlerDelete }) => {
     return (
         <>
-            {items.map(({ id, title, hours, minutes, seconds, pause }) => {
+            {items.map(({ id, title, seconds, pause }) => {
+                const hours = Math.floor(seconds / 3600);
+                const minutes = Math.floor(seconds / 60);
+
                 return (
                     <li key={id} className={`list__item ${!pause ? "active" : ""}`}>
                         <div title={title} className="list__title">
                             {title}
                         </div>
                         <div className="list__time">
-                            {addZero(hours)}:{addZero(minutes)}:{addZero(seconds)}
+                            {addZero(hours)}:{addZero(converter(minutes))}:{addZero(converter(seconds))}
                         </div>
                         <div className="list__buttons">
                             <button
@@ -33,9 +36,7 @@ ListItem.propTypes = {
         PropTypes.shape({
             id: PropTypes.number.isRequired,
             title: PropTypes.string.isRequired,
-            hours: PropTypes.string.isRequired,
-            minutes: PropTypes.string.isRequired,
-            seconds: PropTypes.string.isRequired,
+            seconds: PropTypes.number.isRequired,
             pause: PropTypes.bool.isRequired,
         }),
     ),

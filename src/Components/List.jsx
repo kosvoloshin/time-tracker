@@ -15,9 +15,7 @@ List.propTypes = {
         PropTypes.shape({
             id: PropTypes.number.isRequired,
             title: PropTypes.string.isRequired,
-            hours: PropTypes.string.isRequired,
-            minutes: PropTypes.string.isRequired,
-            seconds: PropTypes.string.isRequired,
+            seconds: PropTypes.number.isRequired,
             pause: PropTypes.bool.isRequired,
         }),
     ),
